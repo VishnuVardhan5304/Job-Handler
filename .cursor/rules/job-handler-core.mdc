@@ -1,0 +1,60 @@
+---
+description: Job Handler domain, stack, and project-wide conventions
+alwaysApply: true
+---
+
+# Job Handler — Core Rules
+
+## What this project is
+
+Organization **Job Handler** for data pipeline jobs — not a ticketing or helpdesk app.
+
+## Stack (do not swap without approval)
+
+- Frontend: React + Vite + TypeScript
+- Backend: Python FastAPI + SQLAlchemy + Alembic + Pydantic
+- Database: PostgreSQL
+
+## Domain language (always use these terms)
+
+| Concept | Meaning |
+|---------|---------|
+| Job | A pipeline or sync task the organization runs |
+| JobType | One of: Epicor?GD Warehouse, TXT?RPT, RPT?Fabric, Data Flow?Lake House |
+| JobProblem | Operational issue linked to a Job |
+| JobRun | Execution attempt / status history for a Job |
+
+Never use ticket, issue tracker, or helpdesk vocabulary.
+
+## Monorepo layout
+
+- `backend/` — API, models, services, migrations
+- `frontend/` — UI, pages, components, API client
+- `docs/` — SRS, data model, API notes
+
+Ask for human approval before adding new top-level folders, new major dependencies, or schema changes.
+
+## API error shape
+
+Return consistent JSON errors:
+
+```json
+{ "detail": "message", "code": "ERROR_CODE", "fields": {} }
+```
+
+Use 404 for missing resources, 422 for validation, 500 only for unexpected failures (no stack traces to clients).
+
+## Always
+
+- Work in thin slices; one resource or page per Agent session when possible
+- Match naming across backend schemas and frontend types
+- Prefer soft delete/archive for Jobs when SRS specifies it
+- Explain files changed and how to run locally after each slice
+
+## Never
+
+- Rename domain concepts to tickets, cases, or incidents
+- Put business logic in API route handlers (use service layer)
+- Auto-run migrations, destructive SQL, or production DB commands
+- Commit secrets or real connection strings
+- Build the whole app in one prompt

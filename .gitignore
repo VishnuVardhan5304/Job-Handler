@@ -1,0 +1,64 @@
+# Dependencies
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.eggs/
+
+# Build output
+dist/
+build/
+.vite/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!**/.env.example
+!.env.docker.example
+!.env.production.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# Test coverage
+coverage/
+htmlcov/
+
+# Database local files
+*.bak
+*.mdf
+*.ldf
+*.ndf
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Debug
+*.pid
+*.seed

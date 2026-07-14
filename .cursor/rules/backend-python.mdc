@@ -1,0 +1,35 @@
+---
+description: FastAPI backend conventions for Job Handler
+globs: backend/**/*.py
+alwaysApply: false
+---
+
+# Backend Rules
+
+## Structure
+
+- `api/` — routers only; delegate to services
+- `services/` — business logic
+- `repositories/` or `crud/` — database access
+- `models/` — SQLAlchemy models
+- `schemas/` — Pydantic request/response models
+- `core/` — config, database session, dependencies
+
+## Conventions
+
+- API prefix: `/api/v1`
+- Use enums for `job_type` and `status` — align with domain JobTypes
+- Pagination on list endpoints; filter by `job_type`, `status`, search by name
+- Seed the four example pipeline jobs in dev/test fixtures when appropriate
+
+## JobType values
+
+- `EPICOR_GD_WH_SYNC` — Epicor ? GD Warehouse
+- `TXT_TO_RPT` — TXT ? RPT tables
+- `RPT_TO_FABRIC` — RPT ? Fabric (Data Flow)
+- `DATAFLOW_TO_LAKEHOUSE` — Data Flow ? Lake House
+
+## Migrations
+
+- Use Alembic; review generated SQL before applying
+- Do not run `alembic upgrade` without explicit approval

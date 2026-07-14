@@ -1,0 +1,29 @@
+---
+description: React frontend conventions for Job Handler
+globs: frontend/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Frontend Rules
+
+## Structure
+
+- `pages/` — route-level views (Dashboard, Jobs List, Job Detail)
+- `features/jobs/` — job-specific forms, hooks, types
+- `features/problems/` — job problem UI
+- `components/` — reusable UI primitives (badges, table, modal, toast)
+- `api/` — typed client; centralize fetch and error handling
+
+## Conventions
+
+- Mirror backend types for Job and JobProblem
+- Show loading, empty, and error states on every data view
+- JobType badges use human labels (e.g. "Epicor ? GD Warehouse")
+- Create Job form: selecting JobType should suggest source and target systems
+- Keep styling clean and professional — avoid generic AI purple themes
+
+## UX priorities
+
+- Dashboard: status counts, recent jobs, unresolved problems, Create Job CTA
+- Jobs List: search, filter by type/status, sort, pagination
+- Job Detail: problems list with add and resolve flows
