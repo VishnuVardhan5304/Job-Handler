@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { fetchJobTemplates } from "../api/jobs";
 import { getErrorMessage } from "../api/errors";
 import { EmptyState } from "../components/EmptyState";
+import { ErrorPanel, LoadingBlock } from "../components/AsyncState";
 import { JobTypeBadge } from "../components/JobTypeBadge";
 import { PageHeader } from "../components/PageHeader";
 import type { JobTemplate } from "../types/template";
@@ -49,19 +50,29 @@ export function JobTemplatesPage() {
         yet.
       </p>
 
-      {loading ? (
-        <div className="template-grid">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="template-card skeleton" />
-          ))}
-        </div>
-      ) : null}
+      {loading ? <LoadingBlock label="Loading templates…" rows={4} /> : null}
 
       {error ? (
-        <EmptyState title="Templates unavailable" description={error} />
+        <ErrorPanel
+          title="Templates unavailable"
+          message={error}
+          onRetry={() => window.location.reload()}
+        />
       ) : null}
 
-      {!loading && !error ? (
+      {!loading && !error && templates.length === 0 ? (
+        <EmptyState
+          title="No templates available"
+          description="Pipeline templates could not be loaded from the API, or none are configured."
+          action={
+            <Link to="/jobs/new" className="btn btn--secondary">
+              Blank job form
+            </Link>
+          }
+        />
+      ) : null}
+
+      {!loading && !error && templates.length > 0 ? (
         <div className="template-grid">
           {templates.map((template) => (
             <article key={template.id} className="template-card panel">

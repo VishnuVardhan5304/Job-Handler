@@ -26,7 +26,18 @@ class JobBase(BaseModel):
 
 
 class JobCreate(JobBase):
-    pass
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "name": "Nightly TXT to RPT Load",
+                    "job_type": "TXT_TO_RPT",
+                    "status": "active",
+                    "schedule_cron": "0 3 * * *",
+                }
+            ]
+        }
+    )
 
 
 class JobUpdate(BaseModel):

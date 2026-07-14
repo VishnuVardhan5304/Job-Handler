@@ -59,6 +59,12 @@ class JobService:
         return JobRead.model_validate(job)
 
     def create_job(self, payload: JobCreate) -> JobRead:
+        if payload.status == JobStatus.ARCHIVED:
+            raise ValidationError(
+                detail="Cannot create a job as archived; archive after creation",
+                fields={"status": "Use the archive action instead"},
+            )
+
         now = utc_now()
         job = Job(
             name=payload.name.strip(),
@@ -82,6 +88,12 @@ class JobService:
         data = payload.model_dump(exclude_unset=True)
         if not data:
             raise ValidationError(detail="No fields provided for update")
+
+        if data.get("status") == JobStatus.ARCHIVED:
+            raise ValidationError(
+                detail="Cannot set status to archived via update; use the archive action",
+                fields={"status": "Use POST /jobs/{id}/archive"},
+            )
 
         if "name" in data and data["name"]:
             data["name"] = data["name"].strip()

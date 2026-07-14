@@ -22,7 +22,17 @@ class JobProblemBase(BaseModel):
 
 
 class JobProblemCreate(JobProblemBase):
-    pass
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "severity": "high",
+                    "code": "SYNC_TIMEOUT",
+                    "message": "Watermark sync exceeded 30 minutes",
+                }
+            ]
+        }
+    )
 
 
 class JobProblemUpdate(BaseModel):

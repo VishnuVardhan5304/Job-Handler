@@ -36,6 +36,11 @@
 - [ ] Failed run offers **Log problem** with code `RUN_FAILED`
 - [ ] Archived job: runs history visible; simulate button hidden
 
+## Continuous integration
+
+- [ ] PR CI green (frontend build + backend import) when using GitHub — see `docs/ci.md`
+- CI does **not** replace local smoke of Jobs / Problems / Runs against your DB
+
 ## Error handling
 
 - [ ] Stop backend → UI shows unreachable/API error (not blank screen)

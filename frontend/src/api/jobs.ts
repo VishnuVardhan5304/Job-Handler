@@ -1,4 +1,5 @@
 import { apiRequest } from "./client";
+import { toQuery } from "./toQuery";
 import type { Job, JobListResponse, JobStatus, JobType } from "../types/api";
 import type { JobTemplate } from "../types/template";
 
@@ -31,17 +32,6 @@ export interface JobListParams {
   include_archived?: boolean;
   sort_by?: string;
   sort_order?: "asc" | "desc";
-}
-
-function toQuery(params: JobListParams): string {
-  const query = new URLSearchParams();
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== "") {
-      query.set(key, String(value));
-    }
-  });
-  const serialized = query.toString();
-  return serialized ? `?${serialized}` : "";
 }
 
 export function fetchJobs(params: JobListParams = {}): Promise<JobListResponse> {

@@ -33,10 +33,11 @@ function emptyTypeCounts(): Record<JobType, number> {
   };
 }
 
-function buildDashboard(jobs: Job[], unresolvedTotal: number): DashboardData {
+function buildDashboard(jobs: Job[], totalJobs: number, unresolvedTotal: number): DashboardData {
   const statusCounts = emptyStatusCounts();
   const typeCounts = emptyTypeCounts();
 
+  // Status/type chips reflect the fetched page sample until a dedicated stats API exists.
   for (const job of jobs) {
     statusCounts[job.status] += 1;
     typeCounts[job.job_type] += 1;
@@ -47,7 +48,7 @@ function buildDashboard(jobs: Job[], unresolvedTotal: number): DashboardData {
     .slice(0, 10);
 
   return {
-    totalJobs: jobs.length,
+    totalJobs,
     statusCounts,
     typeCounts,
     recentJobs,
@@ -75,7 +76,11 @@ export function useDashboardData() {
 
         if (!active) return;
 
-        const data = buildDashboard(jobsResponse.items, problemsResponse.total);
+        const data = buildDashboard(
+          jobsResponse.items,
+          jobsResponse.total,
+          problemsResponse.total,
+        );
         setState({ status: "ready", data });
       } catch (error: unknown) {
         if (!active) return;

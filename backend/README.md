@@ -36,8 +36,15 @@ tests/              # pytest (Phase 6)
 ## Verify
 
 - Health: `GET http://localhost:5000/health` or `GET http://localhost:5000/api/v1/health`
-- OpenAPI docs: `http://localhost:5000/docs`
+- Swagger UI: `http://localhost:5000/docs`
+- ReDoc: `http://localhost:5000/redoc`
+- OpenAPI JSON: `http://localhost:5000/openapi.json`
+
+## API documentation
+
+- Developer overview (endpoint map, errors, examples): [`docs/api-overview.md`](../docs/api-overview.md)
+- Architecture notes: [`docs/architecture.md`](../docs/architecture.md)
 
 ## API base
 
-`/api/v1` — see `docs/architecture.md`
+`/api/v1` — Jobs, JobProblems, JobRuns, Templates. No auth in MVP.

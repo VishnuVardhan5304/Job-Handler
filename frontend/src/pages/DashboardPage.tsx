@@ -9,16 +9,8 @@ import {
   ALL_TYPES,
   useDashboardData,
 } from "../features/jobs/useDashboardData";
-
-function formatRelativeTime(iso: string): string {
-  const date = new Date(iso);
-  return date.toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+import { formatDateTime } from "../lib/format";
+import { ErrorPanel } from "../components/AsyncState";
 
 export function DashboardPage() {
   const state = useDashboardData();
@@ -40,14 +32,10 @@ export function DashboardPage() {
     return (
       <section className="panel">
         <PageHeader title="Dashboard" subtitle="Organization pipeline overview" />
-        <EmptyState
+        <ErrorPanel
           title="Dashboard unavailable"
-          description={state.message}
-          action={
-            <button type="button" className="btn btn--secondary" onClick={() => window.location.reload()}>
-              Retry
-            </button>
-          }
+          message={state.message}
+          onRetry={() => window.location.reload()}
         />
       </section>
     );
@@ -155,7 +143,7 @@ export function DashboardPage() {
               {
                 key: "updated",
                 header: "Updated",
-                render: (row) => formatRelativeTime(row.updated_at),
+                render: (row) => formatDateTime(row.updated_at),
               },
             ]}
             rows={data.recentJobs}

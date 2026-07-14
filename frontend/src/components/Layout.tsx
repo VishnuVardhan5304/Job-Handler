@@ -16,9 +16,6 @@ export function Layout() {
           <NavLink to="/jobs" className={({ isActive }) => (isActive ? "active" : undefined)}>
             Jobs
           </NavLink>
-          <NavLink to="/dev/ui" className={({ isActive }) => (isActive ? "active" : undefined)}>
-            UI preview
-          </NavLink>
         </nav>
         <HealthIndicator />
       </header>

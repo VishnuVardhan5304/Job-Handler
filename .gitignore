@@ -18,14 +18,20 @@ env/
 dist/
 build/
 .vite/
+*.tsbuildinfo
 
-# Environment and secrets
+# Environment and secrets — never commit real values
 .env
 .env.*
 !.env.example
 !**/.env.example
 !.env.docker.example
 !.env.production.example
+*.pem
+*.key
+credentials.json
+secrets.json
+.secrets/
 
 # Logs
 logs/
@@ -47,18 +53,25 @@ desktop.ini
 # Test coverage
 coverage/
 htmlcov/
+.coverage
+coverage.xml
 
-# Database local files
+# Database local files / dumps
 *.bak
 *.mdf
 *.ldf
 *.ndf
+*.dump
+*.sql.gz
 
 # Temporary files
 tmp/
 temp/
 *.tmp
 
-# Debug
+# Debug / process
 *.pid
 *.seed
+
+# Local agent / tooling scratch (keep project rules under .cursor/rules)
+.cursor/*.log

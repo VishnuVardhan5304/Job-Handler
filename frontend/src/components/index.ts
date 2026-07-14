@@ -8,6 +8,7 @@ export { JobTypeBadge } from "./JobTypeBadge";
 export { Layout } from "./Layout";
 export { Modal } from "./Modal";
 export { PageHeader } from "./PageHeader";
+export { RunStatusBadge } from "./RunStatusBadge";
 export { SeverityBadge } from "./SeverityBadge";
 export { StatusBadge } from "./StatusBadge";
 export { ErrorPanel, LoadingBlock } from "./AsyncState";

@@ -88,6 +88,13 @@ export function CreateJobPage() {
         </div>
       ) : null}
 
+      {templateId && resolvedTemplate === null ? (
+        <p className="form-banner form-banner--error">
+          Unknown template “{templateId}”. Continue with the blank form or{" "}
+          <Link to="/jobs/templates">pick a template</Link>.
+        </p>
+      ) : null}
+
       <form className="panel create-job__form" onSubmit={handleSubmit} noValidate>
         {errors.form ? <p className="form-banner form-banner--error">{errors.form}</p> : null}
 
@@ -154,11 +161,13 @@ export function CreateJobPage() {
               value={values.status}
               onChange={(event) => setField("status", event.target.value as JobStatus)}
             >
-              {(Object.keys(labels.jobStatus) as JobStatus[]).map((status) => (
-                <option key={status} value={status}>
-                  {labels.jobStatus[status]}
-                </option>
-              ))}
+              {(Object.keys(labels.jobStatus) as JobStatus[])
+                .filter((status) => status !== "archived")
+                .map((status) => (
+                  <option key={status} value={status}>
+                    {labels.jobStatus[status]}
+                  </option>
+                ))}
             </select>
           </FormField>
 

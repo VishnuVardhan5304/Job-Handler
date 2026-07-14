@@ -1,4 +1,5 @@
 import { apiRequest } from "./client";
+import { toQuery } from "./toQuery";
 import type { JobProblem, JobProblemListResponse, ProblemSeverity } from "../types/api";
 
 export interface ProblemCreatePayload {
@@ -16,17 +17,6 @@ export interface ProblemListParams {
   severity?: ProblemSeverity;
   unresolved_only?: boolean;
   sort_order?: "asc" | "desc";
-}
-
-function toQuery(params: ProblemListParams): string {
-  const query = new URLSearchParams();
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== "") {
-      query.set(key, String(value));
-    }
-  });
-  const serialized = query.toString();
-  return serialized ? `?${serialized}` : "";
 }
 
 export function fetchProblems(params: ProblemListParams = {}): Promise<JobProblemListResponse> {

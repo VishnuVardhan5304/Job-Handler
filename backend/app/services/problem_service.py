@@ -63,7 +63,7 @@ class ProblemService:
         unresolved_only: bool = True,
         sort_order: str = "desc",
     ) -> JobProblemListResponse:
-        self._ensure_job_exists_and_active(job_id)
+        self._ensure_job_exists(job_id)
         return self.list_problems(
             page=page,
             page_size=page_size,
@@ -130,12 +130,17 @@ class ProblemService:
             raise NotFoundError(detail=f"Problem {problem_id} not found")
         return problem
 
+    def _ensure_job_exists(self, job_id: uuid.UUID) -> None:
+        job = self.job_repo.get_by_id(job_id)
+        if job is None:
+            raise NotFoundError(detail=f"Job {job_id} not found")
+
     def _ensure_job_exists_and_active(self, job_id: uuid.UUID) -> None:
         job = self.job_repo.get_by_id(job_id)
         if job is None:
             raise NotFoundError(detail=f"Job {job_id} not found")
         if job.archived_at is not None:
             raise ValidationError(
-                detail="Cannot add or list problems for an archived job",
+                detail="Cannot add problems for an archived job",
                 fields={"job_id": "Job is archived"},
             )

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { DataTable } from "../components/DataTable";
 import { EmptyState } from "../components/EmptyState";
+import { ErrorPanel, LoadingBlock } from "../components/AsyncState";
 import { JobStatusBadge } from "../components/JobStatusBadge";
 import { JobTypeBadge } from "../components/JobTypeBadge";
 import { PageHeader } from "../components/PageHeader";
@@ -9,17 +10,8 @@ import {
   JOB_TYPE_LABELS,
   useJobsList,
 } from "../features/jobs/useJobsList";
+import { formatDateTime } from "../lib/format";
 import type { JobStatus, JobType } from "../types/api";
-
-function formatUpdatedAt(iso: string): string {
-  return new Date(iso).toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 export function JobsListPage() {
   const { state, searchInput, setSearchInput, filters, updateParams, goToJob } = useJobsList();
@@ -154,22 +146,14 @@ export function JobsListPage() {
 
       <section className="panel jobs-list__results">
         {state.status === "loading" ? (
-          <div className="jobs-list__loading">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <div key={index} className="skeleton jobs-list__skeleton-row" />
-            ))}
-          </div>
+          <LoadingBlock label="Loading jobs…" rows={5} />
         ) : null}
 
         {state.status === "error" ? (
-          <EmptyState
+          <ErrorPanel
             title="Could not load jobs"
-            description={state.message}
-            action={
-              <button type="button" className="btn btn--secondary" onClick={() => window.location.reload()}>
-                Retry
-              </button>
-            }
+            message={state.message}
+            onRetry={() => window.location.reload()}
           />
         ) : null}
 
@@ -246,7 +230,7 @@ export function JobsListPage() {
                 {
                   key: "updated",
                   header: "Updated",
-                  render: (row) => formatUpdatedAt(row.updated_at),
+                  render: (row) => formatDateTime(row.updated_at),
                 },
                 {
                   key: "actions",

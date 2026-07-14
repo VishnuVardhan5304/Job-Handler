@@ -32,10 +32,13 @@ src/
 - Open `http://localhost:5173`
 - Header should show **API connected** when backend health is OK
 
-## Routes (planned)
+## Routes
 
-- `/` — Dashboard (Step 19)
-- `/jobs` — Jobs list (Step 20)
-- `/jobs/new` — Create job (Step 21)
-- `/jobs/:id` — Job detail (Step 23)
-- `/jobs/:id/edit` — Edit job (Step 22)
+- `/` — Dashboard
+- `/jobs` — Jobs list
+- `/jobs/templates` — Create from template
+- `/jobs/new` — Create job
+- `/jobs/:id` — Job detail (problems + simulated runs)
+- `/jobs/:id/edit` — Edit / archive job
+
+See the [root README](../README.md) for full local setup.

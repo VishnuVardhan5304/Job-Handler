@@ -2,7 +2,7 @@ import logging
 import time
 import uuid
 
-from fastapi import Request
+from fastapi import HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -18,6 +18,13 @@ def register_exception_handlers(app) -> None:
     async def app_error_handler(_request: Request, exc: AppError) -> JSONResponse:
         body = ErrorResponse(detail=exc.detail, code=exc.code, fields=exc.fields)
         return JSONResponse(status_code=exc.status_code, content=body.model_dump(exclude_none=True))
+
+    @app.exception_handler(HTTPException)
+    async def http_exception_handler(_request: Request, exc: HTTPException) -> JSONResponse:
+        detail = exc.detail if isinstance(exc.detail, str) else "Request failed"
+        code = "NOT_FOUND" if exc.status_code == 404 else "HTTP_ERROR"
+        body = ErrorResponse(detail=detail, code=code)
+        return JSONResponse(status_code=exc.status_code, content=body.model_dump())
 
     @app.exception_handler(RequestValidationError)
     async def validation_error_handler(

@@ -13,17 +13,9 @@ import { useToast } from "../components/Toast";
 import { useJobProblems } from "../features/problems/useJobProblems";
 import { useJobRuns } from "../features/runs/useJobRuns";
 import { SEVERITY_LABELS } from "../lib/labels";
+import { formatDateTime } from "../lib/format";
 import type { Job, ProblemSeverity } from "../types/api";
 import { getErrorMessage } from "../api/errors";
-
-function formatWhen(iso: string): string {
-  return new Date(iso).toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 export function JobDetailPage() {
   const { jobId } = useParams<{ jobId: string }>();
@@ -218,12 +210,12 @@ export function JobDetailPage() {
               {
                 key: "started",
                 header: "Started",
-                render: (row) => formatWhen(row.started_at),
+                render: (row) => formatDateTime(row.started_at),
               },
               {
                 key: "finished",
                 header: "Finished",
-                render: (row) => (row.finished_at ? formatWhen(row.finished_at) : "—"),
+                render: (row) => (row.finished_at ? formatDateTime(row.finished_at) : "—"),
               },
               {
                 key: "message",
@@ -357,12 +349,12 @@ export function JobDetailPage() {
               {
                 key: "occurred",
                 header: "Occurred",
-                render: (row) => formatWhen(row.occurred_at),
+                render: (row) => formatDateTime(row.occurred_at),
               },
               {
                 key: "resolved",
                 header: "Resolved",
-                render: (row) => (row.resolved_at ? formatWhen(row.resolved_at) : "—"),
+                render: (row) => (row.resolved_at ? formatDateTime(row.resolved_at) : "—"),
               },
               {
                 key: "actions",
