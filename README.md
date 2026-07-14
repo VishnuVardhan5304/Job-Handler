@@ -139,6 +139,7 @@ Open http://localhost:5173 — the header should show **API connected** when the
 | [docs/integration-checklist.md](docs/integration-checklist.md) | Local QA checklist |
 | [docs/git-workflow.md](docs/git-workflow.md) | Git branches, secrets, PR checklist |
 | [docs/ci.md](docs/ci.md) | GitHub Actions build checks |
+| [docs/smoke-step42.md](docs/smoke-step42.md) | Latest local API smoke notes |
 | [AGENTS.md](AGENTS.md) | Cursor / agent workflow for this repo |
 | [backend/README.md](backend/README.md) | Backend details |
 | [frontend/README.md](frontend/README.md) | Frontend details |
