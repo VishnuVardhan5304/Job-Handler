@@ -115,13 +115,13 @@ Open http://localhost:5173 — the header should show **API connected** when the
 
 ---
 
-## MVP limits
+## Access
 
-- **No authentication** — do not expose the API publicly without a gateway
-- **Simulated connectors** — Epicor, Fabric, and Lake House are not called live
-- **Simulated runs** — `POST .../runs/simulate` records status history only
-- **Soft archive** — jobs are archived, not hard-deleted
-- **Schedule cron** — stored as metadata; no real scheduler in MVP
+- **Open full access** — no login, no Admin / Operator / Viewer roles
+- Anyone who can open the app may create, edit, archive jobs; log/resolve problems; simulate runs
+- Do not expose the API on an untrusted public network without a gateway you control
+- Connectors to Epicor / Fabric / Lake House remain **simulated**
+- Soft archive for jobs; schedule cron is metadata only
 
 ---
 

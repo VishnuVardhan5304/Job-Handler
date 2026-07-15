@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.models.job import JobProblem, ProblemSeverity
+from app.models.job import JobProblem, JobSolution, ProblemSeverity, ProblemStatus
 
 
 class ProblemRepository:
@@ -37,8 +37,8 @@ class ProblemRepository:
             count_query = count_query.where(JobProblem.severity == severity)
 
         if unresolved_only:
-            query = query.where(JobProblem.resolved_at.is_(None))
-            count_query = count_query.where(JobProblem.resolved_at.is_(None))
+            query = query.where(JobProblem.status == ProblemStatus.OPEN)
+            count_query = count_query.where(JobProblem.status == ProblemStatus.OPEN)
 
         if sort_order == "asc":
             query = query.order_by(JobProblem.occurred_at.asc())
@@ -62,13 +62,70 @@ class ProblemRepository:
         self.db.refresh(problem)
         return problem
 
-    def resolve(self, problem: JobProblem) -> JobProblem:
+    def close(self, problem: JobProblem) -> JobProblem:
         now = datetime.now(timezone.utc)
+        problem.status = ProblemStatus.CLOSED
         problem.resolved_at = now
         problem.updated_at = now
         self.db.commit()
         self.db.refresh(problem)
         return problem
+
+    def resolve(self, problem: JobProblem) -> JobProblem:
+        return self.close(problem)
+
+    @staticmethod
+    def pages(total: int, page_size: int) -> int:
+        return max(1, math.ceil(total / page_size)) if total else 0
+
+
+class SolutionRepository:
+    def __init__(self, db: Session) -> None:
+        self.db = db
+
+    def get_by_id(self, solution_id: uuid.UUID) -> JobSolution | None:
+        return self.db.get(JobSolution, solution_id)
+
+    def list_for_job(
+        self,
+        job_id: uuid.UUID,
+        *,
+        page: int,
+        page_size: int,
+        job_problem_id: uuid.UUID | None = None,
+        sort_order: str = "desc",
+    ) -> tuple[list[JobSolution], int]:
+        query = (
+            select(JobSolution)
+            .join(JobProblem, JobSolution.job_problem_id == JobProblem.id)
+            .where(JobProblem.job_id == job_id)
+        )
+        count_query = (
+            select(func.count())
+            .select_from(JobSolution)
+            .join(JobProblem, JobSolution.job_problem_id == JobProblem.id)
+            .where(JobProblem.job_id == job_id)
+        )
+
+        if job_problem_id:
+            query = query.where(JobSolution.job_problem_id == job_problem_id)
+            count_query = count_query.where(JobSolution.job_problem_id == job_problem_id)
+
+        if sort_order == "asc":
+            query = query.order_by(JobSolution.created_at.asc())
+        else:
+            query = query.order_by(JobSolution.created_at.desc())
+
+        total = self.db.scalar(count_query) or 0
+        offset = (page - 1) * page_size
+        items = list(self.db.scalars(query.offset(offset).limit(page_size)).all())
+        return items, total
+
+    def create(self, solution: JobSolution) -> JobSolution:
+        self.db.add(solution)
+        self.db.commit()
+        self.db.refresh(solution)
+        return solution
 
     @staticmethod
     def pages(total: int, page_size: int) -> int:

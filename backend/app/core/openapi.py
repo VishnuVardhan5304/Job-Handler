@@ -10,7 +10,7 @@ REST API for the **Organization Job Handler** — pipeline Jobs, JobProblems, an
 
 **Domain:** Job · JobProblem · JobRun (not tickets / helpdesk).
 
-**MVP auth:** None. Do not expose publicly without a gateway.
+**MVP auth:** None — open full access; no roles. Do not expose publicly without a trusted network boundary.
 
 **Error shape:** `{ "detail": "...", "code": "...", "fields": {} }`
 
@@ -46,5 +46,9 @@ OPENAPI_TAGS = [
     {
         "name": "job-runs",
         "description": "Simulated JobRun history and trigger (no live connectors).",
+    },
+    {
+        "name": "job-solutions",
+        "description": "Solutions for JobProblems; adding a solution closes the problem.",
     },
 ]

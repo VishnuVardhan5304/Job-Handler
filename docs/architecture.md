@@ -1,5 +1,5 @@
 # Solution Architecture
-# Organization Job Handler — MVP
+# Organization Job Handler ? MVP
 
 **Version:** 0.1  
 **Status:** Awaiting approval before folder scaffold (Step 10)
@@ -8,10 +8,10 @@
 
 ## 1. Architectural goals
 
-- **Thin vertical slices** — ship one resource (Jobs, then Problems) end-to-end before expanding
-- **Clear boundaries** — UI talks only to REST API; API talks only to PostgreSQL via service/repository layers
-- **Domain fidelity** — Job, JobProblem, JobRun; four pipeline types as enums/templates
-- **MVP pragmatism** — no auth, simulated runs, metadata-only external systems
+- **Thin vertical slices** ? ship one resource (Jobs, then Problems) end-to-end before expanding
+- **Clear boundaries** ? UI talks only to REST API; API talks only to PostgreSQL via service/repository layers
+- **Domain fidelity** ? Job, JobProblem, JobRun; four pipeline types as enums/templates
+- **MVP pragmatism** ? open full access (no auth/roles), simulated runs, metadata-only external systems
 
 ---
 
@@ -20,9 +20,7 @@
 ```mermaid
 flowchart LR
   subgraph users [Users]
-    Admin[Admin]
-    Operator[Operator]
-    Viewer[Viewer]
+    Anyone[Anyone with access]
   end
 
   subgraph client [Browser]
@@ -45,9 +43,7 @@ flowchart LR
     Lake[Lake House]
   end
 
-  Admin --> UI
-  Operator --> UI
-  Viewer --> UI
+  Anyone --> UI
   UI -->|REST /api/v1| Routers
   Routers --> Services
   Services --> Repos
@@ -89,10 +85,10 @@ Job Handler/
 ??? docs/                     SRS, stories, architecture, data model
 ??? .env.docker.example
 ??? .env.production.example
-??? docker-compose.yml        (later — Step 40)
+??? docker-compose.yml        (later ? Step 40)
 ```
 
-**Principle:** No shared code package in MVP — TypeScript types mirror Pydantic schemas manually (keep in sync via review).
+**Principle:** No shared code package in MVP ? TypeScript types mirror Pydantic schemas manually (keep in sync via review).
 
 ---
 
@@ -189,17 +185,16 @@ Templates pre-fill `job_type`, `source_system`, `target_system`, and a minimal `
 
 ---
 
-## 7. Authentication (MVP)
+## 7. Access control
 
 | Aspect | Decision |
 |--------|----------|
-| MVP auth | **None** — open API on trusted local/dev network |
-| CORS | Restrict to `CLIENT_URL` from env (e.g. `http://localhost:5173`) |
-| Future | JWT or SSO middleware hook in FastAPI `deps`; role checks on routers |
+| Auth | **None** - intentional open full access |
+| Roles | **None** - no Admin / Operator / Viewer |
+| CORS | Restrict browser origin via CLIENT_URL (e.g. http://localhost:5173) |
+| API | All Job / JobProblem / JobRun / template endpoints usable without credentials |
 
-**Risk accepted:** Anyone with network access can mutate data in dev. Document clearly in README.
-
----
+Anyone who can reach the console or API can create, edit, archive, log problems, resolve, and simulate runs.
 
 ## 8. Database & migrations
 
@@ -207,7 +202,7 @@ Templates pre-fill `job_type`, `source_system`, `target_system`, and a minimal `
 |--------|----------|
 | Engine | PostgreSQL (Neon pooled URL or local Postgres) |
 | ORM | SQLAlchemy 2.x |
-| Migrations | Alembic — review SQL before `upgrade` |
+| Migrations | Alembic ? review SQL before `upgrade` |
 | Soft delete | `archived_at` on jobs; default lists exclude archived |
 | JSON fields | `config` on Job, `metadata` on JobProblem |
 
@@ -247,7 +242,7 @@ flowchart TB
 
 | Concern | Approach |
 |---------|----------|
-| Routing | React Router — `/`, `/jobs`, `/jobs/new`, `/jobs/:id`, `/jobs/:id/edit` |
+| Routing | React Router ? `/`, `/jobs`, `/jobs/new`, `/jobs/:id`, `/jobs/:id/edit` |
 | Data fetching | `fetch` or lightweight wrapper; no Redux in MVP |
 | State | Local component state + custom hooks per feature |
 | Env | `VITE_API_URL` ? `http://localhost:5000/api/v1` |
@@ -259,7 +254,7 @@ flowchart TB
 
 No worker process in MVP.
 
-1. Operator clicks **Simulate run** on Job Detail
+1. User clicks **Simulate run** on Job Detail
 2. API creates `JobRun` with `queued` ? immediately transitions to `running` ? random or rule-based `succeeded`/`failed`
 3. On `failed`, UI offers **Create problem from run**
 4. No call to Epicor, Fabric, or Lake House
@@ -291,7 +286,7 @@ Templates already exist at repo root and in backend/frontend folders.
 | Unbounded job run / problem history | Major | Pagination; optional retention policy later |
 | Secret leakage in logs or git | Critical | Structured logging without connection strings; `.env` gitignored |
 | UI/API type drift | Major | Shared enum labels in one frontend map; review on each API change |
-| No auth in MVP | Major | Document dev-only; add auth middleware before any public deploy |
+| Open full access (no auth) | Major | Trusted network only; no public internet exposure without a gateway |
 | Agent generates logic in routers | Minor | Enforce service layer in rules and review |
 | Migration applied without review | Critical | Human approval gate before `alembic upgrade` |
 
@@ -301,8 +296,8 @@ Templates already exist at repo root and in backend/frontend folders.
 
 Not implemented in Step 9. Planned alignment with Ticket project:
 
-- `docker-compose.yml` — Postgres (or external Neon), API, UI
-- GitHub Actions — pytest + vitest on PR
+- `docker-compose.yml` ? Postgres (or external Neon), API, UI
+- GitHub Actions ? pytest + vitest on PR
 - Branch `Vardhan` ? feature branches ? PR
 
 ---
@@ -325,7 +320,7 @@ Before Step 10 (folder scaffold), confirm:
 
 - [ ] Monorepo layout acceptable
 - [ ] `/api/v1` resource design acceptable
-- [ ] No auth for MVP acceptable
+- [ ] Open full access (no roles / no login) acceptable
 - [ ] Simulated runs acceptable
 - [ ] PostgreSQL + Alembic acceptable
 

@@ -7,9 +7,10 @@ interface ModalProps {
   onClose: () => void;
   children: ReactNode;
   footer?: ReactNode;
+  wide?: boolean;
 }
 
-export function Modal({ open, title, onClose, children, footer }: ModalProps) {
+export function Modal({ open, title, onClose, children, footer, wide = false }: ModalProps) {
   useEffect(() => {
     if (!open) return;
 
@@ -26,7 +27,7 @@ export function Modal({ open, title, onClose, children, footer }: ModalProps) {
   return (
     <div className="modal-overlay" role="presentation" onClick={onClose}>
       <div
-        className="modal"
+        className={`modal${wide ? " modal--wide" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
@@ -38,7 +39,7 @@ export function Modal({ open, title, onClose, children, footer }: ModalProps) {
             ×
           </button>
         </header>
-        <div className="modal__body">{children}</div>
+        <div className={`modal__body${wide ? " modal__body--scroll" : ""}`}>{children}</div>
         {footer ? <footer className="modal__footer">{footer}</footer> : null}
       </div>
     </div>

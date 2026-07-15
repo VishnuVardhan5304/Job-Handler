@@ -359,12 +359,20 @@ a:hover {
   box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
 }
 
+.modal--wide {
+  width: min(100%, 56rem);
+  max-height: min(90vh, 44rem);
+  display: flex;
+  flex-direction: column;
+}
+
 .modal__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.25rem;
   border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
 }
 
 .modal__header h2 {
@@ -385,12 +393,33 @@ a:hover {
   padding: 1.25rem;
 }
 
+.modal__body--scroll {
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+  max-height: min(70vh, 32rem);
+}
+
+.scroll-panel {
+  overflow: auto;
+  max-height: min(70vh, 32rem);
+}
+
 .modal__footer {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
   padding: 1rem 1.25rem;
   border-top: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.job-detail__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .btn {
@@ -709,6 +738,13 @@ a:hover {
 
 .table-link:hover {
   text-decoration: underline;
+}
+
+.table-link--mono,
+.mono-id {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  word-break: break-all;
 }
 
 .data-table__actions {

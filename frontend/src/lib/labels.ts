@@ -1,4 +1,4 @@
-import type { JobStatus, JobType, ProblemSeverity, RunStatus } from "../types/api";
+import type { JobStatus, JobType, ProblemSeverity, ProblemStatus, RunStatus } from "../types/api";
 
 export const JOB_TYPE_LABELS: Record<JobType, string> = {
   EPICOR_GD_WH_SYNC: "Epicor → GD Warehouse",
@@ -19,6 +19,11 @@ export const SEVERITY_LABELS: Record<ProblemSeverity, string> = {
   medium: "Medium",
   high: "High",
   critical: "Critical",
+};
+
+export const PROBLEM_STATUS_LABELS: Record<ProblemStatus, string> = {
+  open: "Open",
+  closed: "Closed",
 };
 
 export const RUN_STATUS_LABELS: Record<RunStatus, string> = {

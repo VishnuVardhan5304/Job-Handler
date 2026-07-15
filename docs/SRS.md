@@ -9,7 +9,7 @@
 
 ## 1. Purpose
 
-Provide an internal **Organization Job Handler** console for data and integration teams to register, monitor, and troubleshoot **pipeline jobs** and **job problems** ó not a ticketing or helpdesk system.
+Provide an internal **Organization Job Handler** console for data and integration teams to register, monitor, and troubleshoot **pipeline jobs** and **job problems** ù not a ticketing or helpdesk system.
 
 Example pipelines the system must model from day one:
 
@@ -26,36 +26,37 @@ Example pipelines the system must model from day one:
 
 ### In scope (MVP)
 
-- **Job CRUD** ó create, read, update, archive jobs
-- **Job Problem CRUD** ó log, list, update, resolve problems linked to a job
-- **Dashboard** ó counts by status and job type; recent jobs; unresolved problems
-- **Jobs list** ó search, filter by job type and status, sort, pagination
-- **Four pipeline job types** ó first-class enums/templates with source/target defaults
-- **Job run status (simulated)** ó lightweight run history with manual ìsimulate runî; no real orchestrator
-- **PostgreSQL persistence** ó Neon or compatible Postgres (aligned with sibling projects)
-- **REST API** ó versioned backend consumed by React UI
+- **Job CRUD** ù create, read, update, archive jobs
+- **Job Problem CRUD** ù log, list, update, resolve problems linked to a job
+- **Dashboard** ù counts by status and job type; recent jobs; unresolved problems
+- **Jobs list** ù search, filter by job type and status, sort, pagination
+- **Four pipeline job types** ù first-class enums/templates with source/target defaults
+- **Job run status (simulated)** ù lightweight run history with manual ùsimulate runù; no real orchestrator
+- **PostgreSQL persistence** ù Neon or compatible Postgres (aligned with sibling projects)
+- **REST API** ù versioned backend consumed by React UI
 
 ### Out of scope (MVP / non-goals)
 
 - Real Epicor, Fabric, or Lake House connectors
 - Production job scheduler / worker queue (Celery, RQ, Airflow, etc.)
 - Multi-tenant organizations
-- Full authentication / SSO / RBAC (deferred)
+- Authentication / SSO / RBAC (intentionally not used ù open full access)
 - Email/Slack alerting
 - Audit log beyond basic timestamps
 - Mobile-native app
 
 ---
 
-## 3. Actors
+## 3. Access model
 
-| Actor | Goals |
-|-------|--------|
-| **Admin** | Configure jobs, archive obsolete jobs, oversee pipeline catalog |
-| **Operator** | Day-to-day monitoring, log and resolve problems, trigger simulated runs |
-| **Viewer** | Read-only access to dashboard, jobs, and problems |
+| Aspect | Decision |
+|--------|----------|
+| **Who can use the app** | Anyone who can open the UI or reach the API |
+| **Roles** | **None** ù no Admin / Operator / Viewer |
+| **Login** | **None** ù full access to all Job / JobProblem / JobRun actions |
+| **Auth / RBAC** | **Out of scope** for this product as currently shipped |
 
-*MVP note: No login enforced; all actors share the same access until auth is added.*
+Do not introduce permission-gated screens or API checks for roles.
 
 ---
 
@@ -98,7 +99,7 @@ Example pipelines the system must model from day one:
 |----|-------------|----------|
 | FR-R01 | Record a job run with status transition: queued ? running ? succeeded or failed | SHOULD |
 | FR-R02 | Show latest run and simple timeline on job detail | SHOULD |
-| FR-R03 | ìSimulate runî action on job detail (no external system call) | SHOULD |
+| FR-R03 | ùSimulate runù action on job detail (no external system call) | SHOULD |
 
 **Run status (MVP):** `queued`, `running`, `succeeded`, `failed`
 
@@ -132,7 +133,7 @@ Example pipelines the system must model from day one:
 | NFR-03 | No secrets in source control; use environment templates |
 | NFR-04 | Schema changes via reviewed migrations only |
 | NFR-05 | Code organized in monorepo: frontend and backend separated |
-| NFR-06 | Domain terms consistent across API and UI (Job, JobProblem, JobRun ó not ticket) |
+| NFR-06 | Domain terms consistent across API and UI (Job, JobProblem, JobRun ù not ticket) |
 
 ---
 
@@ -189,7 +190,7 @@ Example pipelines the system must model from day one:
 ## 9. Assumptions (locked for MVP unless changed)
 
 1. Single organization; no multi-tenant
-2. No authentication in MVP
+2. **Open full access** ó no authentication, no Admin / Operator / Viewer roles
 3. Pipeline connectivity simulated only
 4. Soft archive for jobs (not hard delete)
 5. PostgreSQL hosted on Neon or equivalent
@@ -199,7 +200,6 @@ Example pipelines the system must model from day one:
 
 ## 10. Open items for later phases
 
-- Authentication and role-based access
 - Real Epicor / Fabric / Lake House connectors
 - Production scheduler and worker infrastructure
 - Alerting and audit trail

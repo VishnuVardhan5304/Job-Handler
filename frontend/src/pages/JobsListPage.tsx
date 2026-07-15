@@ -204,13 +204,23 @@ export function JobsListPage() {
             <DataTable
               columns={[
                 {
-                  key: "name",
-                  header: "Job",
+                  key: "id",
+                  header: "Job ID",
                   render: (row) => (
-                    <button type="button" className="table-link" onClick={() => goToJob(row.id)}>
-                      {row.name}
+                    <button
+                      type="button"
+                      className="table-link table-link--mono"
+                      title={row.id}
+                      onClick={() => goToJob(row.id)}
+                    >
+                      {row.id}
                     </button>
                   ),
+                },
+                {
+                  key: "name",
+                  header: "Job",
+                  render: (row) => row.name,
                 },
                 {
                   key: "type",
@@ -236,22 +246,12 @@ export function JobsListPage() {
                   key: "actions",
                   header: "",
                   className: "data-table__actions",
-                  render: (row) => (
-                    <div className="table-actions">
-                      <button
-                        type="button"
-                        className="btn btn--secondary btn--small"
-                        onClick={() => goToJob(row.id)}
-                      >
-                        View
-                      </button>
-                      {row.status !== "archived" && !row.archived_at ? (
-                        <Link to={`/jobs/${row.id}/edit`} className="btn btn--secondary btn--small">
-                          Edit
-                        </Link>
-                      ) : null}
-                    </div>
-                  ),
+                  render: (row) =>
+                    row.status !== "archived" && !row.archived_at ? (
+                      <Link to={`/jobs/${row.id}/edit`} className="btn btn--secondary btn--small">
+                        Edit
+                      </Link>
+                    ) : null,
                 },
               ]}
               rows={state.data.items}

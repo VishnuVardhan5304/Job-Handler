@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.models.job import ProblemSeverity
+from app.models.job import ProblemSeverity, ProblemStatus
 
 
 class JobProblemBase(BaseModel):
@@ -56,6 +56,7 @@ class JobProblemRead(BaseModel):
     id: uuid.UUID
     job_id: uuid.UUID
     severity: ProblemSeverity
+    status: ProblemStatus
     code: str
     message: str
     metadata: dict | None = Field(default=None, validation_alias="metadata_")

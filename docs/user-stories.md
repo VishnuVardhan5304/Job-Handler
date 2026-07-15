@@ -1,8 +1,7 @@
 # User Stories & Acceptance Criteria
-# Organization Job Handler ù MVP
+# Organization Job Handler
 
-**Derived from:** SRS v0.1  
-**Status:** Awaiting approval before architecture
+**Access model:** **Open full access** ? anyone who can open the app or call the API may use every feature. There are **no Admin / Operator / Viewer roles**, no login, and no permission checks.
 
 ---
 
@@ -10,18 +9,18 @@
 
 | Label | Meaning |
 |-------|---------|
-| **MUST** | Required for MVP release |
-| **SHOULD** | Important; include if time allows in MVP |
-| **COULD** | Nice to have; defer if needed |
-| **WON'T** | Explicitly out of MVP |
+| **MUST** | Required |
+| **SHOULD** | Important if time allows |
+| **COULD** | Nice to have |
+| **WON'T** | Out of scope for current product |
 
 ---
 
-## Admin stories
+## Job catalog
 
-### US-A01 ù Create a pipeline job (MUST)
+### US-J01 ? Create a pipeline job (MUST)
 
-**As an** Admin,  
+**As anyone using the Job Handler,**  
 **I want** to create a new job with a name, pipeline type, and source ? target systems,  
 **So that** the organization has a registered record of each data pipeline we operate.
 
@@ -33,11 +32,11 @@
 
 ---
 
-### US-A02 ù Create a job from a pipeline template (MUST)
+### US-J02 ? Create a job from a pipeline template (MUST)
 
-**As an** Admin,  
+**As anyone using the Job Handler,**  
 **I want** to start from one of the four known pipeline templates,  
-**So that** I donùt have to manually configure Epicor, TXT, RPT, Fabric, or Lake House jobs each time.
+**So that** I don?t have to manually configure Epicor, TXT, RPT, Fabric, or Lake House jobs each time.
 
 **Acceptance criteria**
 
@@ -47,10 +46,10 @@
 
 ---
 
-### US-A03 ù Edit an existing job (MUST)
+### US-J03 ? Edit an existing job (MUST)
 
-**As an** Admin,  
-**I want** to update a jobùs name, status, schedule, and configuration,  
+**As anyone using the Job Handler,**  
+**I want** to update a job?s name, status, schedule, and configuration,  
 **So that** pipeline metadata stays accurate as systems change.
 
 **Acceptance criteria**
@@ -61,39 +60,39 @@
 
 ---
 
-### US-A04 ù Archive an obsolete job (MUST)
+### US-J04 ? Archive an obsolete job (MUST)
 
-**As an** Admin,  
+**As anyone using the Job Handler,**  
 **I want** to archive jobs that are no longer in use,  
 **So that** the active catalog stays clean without losing history.
 
 **Acceptance criteria**
 
 - **Given** an active job, **when** I confirm archive, **then** the job status becomes `archived` and it disappears from the default jobs list.
-- **Given** an archived job, **when** I view it by direct link or ùshow archivedù filter (if provided), **then** I can still see its details and linked problems.
+- **Given** an archived job, **when** I view it by direct link or ?show archived? filter, **then** I can still see its details and linked problems.
 - **Given** I attempt to archive, **when** the confirmation dialog appears, **then** I must confirm before the action completes.
 
 ---
 
-## Operator stories
+## Monitoring & problems
 
-### US-O01 ù View the operations dashboard (MUST)
+### US-M01 ? View the operations dashboard (MUST)
 
-**As an** Operator,  
+**As anyone using the Job Handler,**  
 **I want** a dashboard showing job counts, recent activity, and open problems,  
-**So that** I can quickly see what needs attention at the start of my shift.
+**So that** I can quickly see what needs attention.
 
 **Acceptance criteria**
 
 - **Given** jobs exist in mixed statuses, **when** I open the dashboard, **then** I see counts grouped by status and by job type.
 - **Given** there are unresolved problems, **when** the dashboard loads, **then** the unresolved count matches the problems API.
-- **Given** the API is unreachable, **when** the dashboard loads, **then** I see a clear error state ù not a blank screen.
+- **Given** the API is unreachable, **when** the dashboard loads, **then** I see a clear error state ? not a blank screen.
 
 ---
 
-### US-O02 ù Browse and filter the jobs list (MUST)
+### US-M02 ? Browse and filter the jobs list (MUST)
 
-**As an** Operator,  
+**As anyone using the Job Handler,**  
 **I want** to search, filter, and sort jobs,  
 **So that** I can find a specific pipeline quickly when a job problem occurs.
 
@@ -101,28 +100,28 @@
 
 - **Given** multiple jobs exist, **when** I search by name substring, **then** only matching jobs are shown.
 - **Given** jobs of different types, **when** I filter by `RPT_TO_FABRIC`, **then** only RPT ? Fabric jobs appear.
-- **Given** a long job list, **when** I change sort to ùlast updatedù, **then** the most recently updated job appears first.
+- **Given** a long job list, **when** I change sort to ?last updated?, **then** the most recently updated job appears first.
 - **Given** no jobs match my filters, **when** the list loads, **then** I see an empty state with guidance to adjust filters or create a job.
 
 ---
 
-### US-O03 ù View job detail and pipeline lineage (MUST)
+### US-M03 ? View job detail and pipeline lineage (MUST)
 
-**As an** Operator,  
-**I want** to open a job and see its type, source ? target, status, and related problems,  
+**As anyone using the Job Handler,**  
+**I want** to open a job and see its type, source ? target, status, related problems, and runs,  
 **So that** I understand what pipeline failed and what downstream systems are affected.
 
 **Acceptance criteria**
 
-- **Given** a job with type `EPICOR_GD_WH_SYNC`, **when** I open job detail, **then** I see a clear label ùEpicor ? GD Warehouseù and source/target fields.
+- **Given** a job with type `EPICOR_GD_WH_SYNC`, **when** I open job detail, **then** I see a clear label ?Epicor ? GD Warehouse? and source/target fields.
 - **Given** a job has three linked problems, **when** I view job detail, **then** all three appear in the problems section.
-- **Given** a job has no problems, **when** I view job detail, **then** I see ùNo open problemsù (or equivalent empty state).
+- **Given** a job has no problems, **when** I view job detail, **then** I see ?No open problems? (or equivalent empty state).
 
 ---
 
-### US-O04 ù Log a job problem (MUST)
+### US-M04 ? Log a job problem (MUST)
 
-**As an** Operator,  
+**As anyone using the Job Handler,**  
 **I want** to record a problem against a job with severity and message,  
 **So that** failures and data issues are tracked in context of the right pipeline.
 
@@ -134,96 +133,81 @@
 
 ---
 
-### US-O05 ù Resolve a job problem (MUST)
+### US-M05 ? Resolve a job problem (MUST)
 
-**As an** Operator,  
+**As anyone using the Job Handler,**  
 **I want** to mark a problem as resolved,  
 **So that** the team knows the job problem is closed.
 
 **Acceptance criteria**
 
-- **Given** an unresolved problem, **when** I click resolve and confirm, **then** `resolved_at` is set and the problem no longer appears in the default unresolved filter.
-- **Given** a resolved problem, **when** I view job detail with ùshow all problemsù, **then** I can still see the resolved problem with its resolution timestamp.
+- **Given** an unresolved problem, **when** I click resolve, **then** `resolved_at` is set and the problem no longer appears in the default unresolved filter.
+- **Given** a resolved problem, **when** I view job detail with ?show all problems?, **then** I can still see the resolved problem with its resolution timestamp.
 
 ---
 
-### US-O06 ù Simulate a job run (SHOULD)
+### US-M06 ? Simulate a job run (SHOULD)
 
-**As an** Operator,  
+**As anyone using the Job Handler,**  
 **I want** to trigger a simulated run and see its outcome,  
-**So that** I can practice the operational flow before real connectors exist.
+**So that** I can exercise the operational flow before real connectors exist.
 
 **Acceptance criteria**
 
-- **Given** an `active` job, **when** I click ùSimulate runù, **then** a run record is created with status progressing to `succeeded` or `failed`.
-- **Given** a simulated run fails, **when** I choose to log a problem from the failure, **then** a new JobProblem is created linked to that job.
-- **Given** multiple runs exist, **when** I view job detail, **then** I see the latest run status and a simple timeline.
+- **Given** an `active` job, **when** I click ?Simulate run?, **then** a run record is created with terminal status `succeeded` or `failed`.
+- **Given** a simulated run fails, **when** I choose to log a problem from the failure, **then** problem fields can be pre-filled (e.g. `RUN_FAILED`).
+- **Given** multiple runs exist, **when** I view job detail, **then** I see run history with status and timestamps.
 
 ---
 
-## Viewer stories
+## Cross-cutting
 
-### US-V01 ù Read-only access to jobs and dashboard (MUST)
+### US-X01 ? Consistent pipeline vocabulary (MUST)
 
-**As a** Viewer,  
-**I want** to see the dashboard and job list without edit controls,  
-**So that** I can stay informed without risking accidental changes.
-
-**Acceptance criteria**
-
-- **Given** viewer mode (or no auth MVP where all users see data), **when** I open the jobs list, **then** I can read all non-archived job fields.
-- **Given** I am a viewer, **when** I view job detail, **then** I do not see create, edit, archive, or resolve actions *(deferred until RBAC; in no-auth MVP all users see actions ù document as known gap)*.
-
----
-
-### US-V02 ù View problems without modifying them (MUST)
-
-**As a** Viewer,  
-**I want** to read problems on a job,  
-**So that** I understand operational issues affecting pipelines I depend on.
-
-**Acceptance criteria**
-
-- **Given** a job with problems, **when** I open job detail, **then** I see severity, code, message, and timestamps for each problem.
-- **Given** problems are filtered to unresolved by default, **when** I toggle to show all, **then** resolved problems are visible read-only.
-
----
-
-## Cross-cutting stories
-
-### US-X01 ù Consistent pipeline vocabulary (MUST)
-
-**As a** team member,  
+**As anyone using the Job Handler,**  
 **I want** the same pipeline names everywhere in the UI and API,  
 **So that** Epicor ? GD Warehouse means the same thing on the dashboard, list, and detail.
 
 **Acceptance criteria**
 
-- **Given** any screen showing job type, **when** type is `DATAFLOW_TO_LAKEHOUSE`, **then** the label reads ùData Flow ? Lake Houseù.
+- **Given** any screen showing job type, **when** type is `DATAFLOW_TO_LAKEHOUSE`, **then** the label reads ?Data Flow ? Lake House?.
 - **Given** API responses, **when** job type is returned, **then** enum values match UI badge mapping exactly.
 
 ---
 
-### US-X02 ù Reliable API error feedback (MUST)
+### US-X02 ? Reliable API error feedback (MUST)
 
-**As an** Operator,  
+**As anyone using the Job Handler,**  
 **I want** clear error messages when an action fails,  
 **So that** I know whether to retry or fix my input.
 
 **Acceptance criteria**
 
-- **Given** invalid job type in API request, **when** server responds, **then** I receive HTTP 422 with a readable validation message.
-- **Given** network failure, **when** I submit a form, **then** the UI shows a toast or inline error ù not a silent failure.
+- **Given** invalid input in an API request, **when** the server responds, **then** I receive HTTP 422 with a readable validation message (`detail` / `code` / optional `fields`).
+- **Given** network failure, **when** I submit a form, **then** the UI shows a toast or inline error ? not a silent failure.
 
 ---
 
-## MVP backlog summary
+### US-X03 ? Open full access (MUST)
+
+**As anyone who can reach the Job Handler,**  
+**I want** full use of every screen and API action without login or roles,  
+**So that** there are no permission barriers while collaborating on the pipeline console.
+
+**Acceptance criteria**
+
+- **Given** the UI is open, **when** I use create, edit, archive, log problem, resolve, or simulate run, **then** the actions are available (no role-gated UI).
+- **Given** the API is reachable, **when** I call mutating endpoints without credentials, **then** the server does not reject for authentication or authorization.
+
+---
+
+## Backlog summary
 
 | Priority | Stories |
 |----------|---------|
-| **MUST** | US-A01, US-A02, US-A03, US-A04, US-O01, US-O02, US-O03, US-O04, US-O05, US-V01, US-V02, US-X01, US-X02 |
-| **SHOULD** | US-O06 (simulated runs) |
-| **WON'T (MVP)** | Real Epicor/Fabric connectors, SSO, multi-tenant, email alerts |
+| **MUST** | US-J01?J04, US-M01?M05, US-X01?X03 |
+| **SHOULD** | US-M06 (simulated runs) |
+| **WON'T** | Auth / SSO / RBAC, Admin/Operator/Viewer roles, real Epicor/Fabric connectors, multi-tenant, email alerts |
 
 ---
 
@@ -231,19 +215,14 @@
 
 | Story | SRS requirements |
 |-------|------------------|
-| US-A01, US-A02 | FR-J01, FR-J09, FR-J10 |
-| US-A03 | FR-J07 |
-| US-A04 | FR-J08 |
-| US-O01 | FR-D01ùFR-D05 |
-| US-O02 | FR-J02ùFR-J05 |
-| US-O03 | FR-J06 |
-| US-O04, US-O05 | FR-P01ùFR-P05 |
-| US-O06 | FR-R01ùFR-R03, FR-P06 |
+| US-J01, US-J02 | FR-J01, FR-J09, FR-J10 |
+| US-J03 | FR-J07 |
+| US-J04 | FR-J08 |
+| US-M01 | FR-D01?FR-D05 |
+| US-M02 | FR-J02?FR-J05 |
+| US-M03 | FR-J06 |
+| US-M04, US-M05 | FR-P01?FR-P05 |
+| US-M06 | FR-R01?FR-R03, FR-P06 |
 | US-X01 | NFR-06 |
 | US-X02 | FR-A02, NFR-02 |
-
----
-
-## Approval
-
-Approve these stories before **Phase 2, Step 9 (architecture design)**.
+| US-X03 | Open access (no auth) |

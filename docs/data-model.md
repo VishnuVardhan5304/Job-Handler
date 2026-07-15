@@ -14,14 +14,16 @@ Three core tables for MVP:
 | Table | Purpose |
 |-------|---------|
 | `jobs` | Pipeline job catalog — the aggregate root |
-| `job_problems` | Operational issues linked to a job |
+| `job_problems` | Operational issues linked to a job (`status`: open/closed) |
+| `job_solutions` | Fixes for a job problem (closes the problem when created) |
 | `job_runs` | Simulated execution history (MVP) |
 
 Relationships:
 
 - One **Job** has many **JobProblems**
 - One **Job** has many **JobRuns**
-- Deleting/archiving a job does not hard-delete problems or runs (soft archive on job only)
+- One **JobProblem** has many **JobSolutions** (`job_problem_id`)
+- Soft archive on job only; problems/solutions/runs are not hard-deleted with the job
 
 ---
 
@@ -227,7 +229,7 @@ Four example jobs matching SRS pipelines:
 ## 9. Out of scope (this model)
 
 - `organizations` / multi-tenant tables
-- `users` / RBAC tables
+- `users` / RBAC tables (not used — open full access, no user accounts)
 - Audit log table
 - Real connector credential storage
 

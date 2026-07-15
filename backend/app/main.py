@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
-from app.api.v1 import health, job_problems, job_runs, jobs, problems
+from app.api.v1 import health, job_problems, job_runs, job_solutions, jobs, problems
 from app.core.config import settings
 from app.core.middleware import RequestLoggingMiddleware, register_exception_handlers
 from app.core.openapi import API_DESCRIPTION, API_TITLE, API_VERSION, OPENAPI_TAGS
@@ -41,6 +41,7 @@ app.include_router(jobs.router, prefix="/api/v1")
 app.include_router(problems.router, prefix="/api/v1")
 app.include_router(job_problems.router, prefix="/api/v1")
 app.include_router(job_runs.router, prefix="/api/v1")
+app.include_router(job_solutions.router, prefix="/api/v1")
 
 
 def custom_openapi():

@@ -8,11 +8,9 @@ This API manages **Jobs** (pipeline catalog), **JobProblems** (operational issue
 
 ---
 
-## Auth (MVP)
+## Auth (open access)
 
-**No authentication** in MVP. Do not expose this API publicly without a gateway or auth layer.
-
-Optional frontend stub: `VITE_API_TOKEN` may be sent as `Authorization: Bearer …` later; the backend does not enforce it yet.
+**No authentication and no roles.** Anyone who can render the UI or call the API has **full access** to Jobs, JobProblems, JobRuns, and templates. Do not expose publicly without a network boundary you trust.
 
 ---
 

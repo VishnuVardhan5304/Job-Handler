@@ -1,0 +1,84 @@
+Organization Job Handler — How to run (Terminal)
+================================================
+
+Prerequisites
+-------------
+- Node.js LTS
+- Python 3.11+
+- Git
+- PostgreSQL URL in backend/.env (Neon pooled URL is fine)
+
+Use TWO terminals: one for the API, one for the UI.
+
+
+ONE-TIME SETUP (first time on this machine)
+-------------------------------------------
+
+--- Terminal A (Backend) ---
+
+cd "c:\Trillion repos\Job Handler\backend"
+copy .env.example .env
+
+  Edit backend\.env and set DATABASE_URL (and CLIENT_URL=http://localhost:5173).
+  Never commit real secrets.
+
+pip install -r requirements.txt
+
+  Migrations — review SQL first, then only if approved:
+  alembic upgrade head
+
+  Optional seed (dev sample jobs):
+  python scripts\seed_jobs.py
+
+
+--- Terminal B (Frontend) ---
+
+cd "c:\Trillion repos\Job Handler\frontend"
+copy .env.example .env
+
+  Default frontend\.env:
+  VITE_API_URL=http://localhost:5000/api/v1
+
+npm install
+
+
+EVERY DAY — START THE APP
+-------------------------
+
+--- Terminal 1: API (keep this window open) ---
+
+cd "c:\Trillion repos\Job Handler\backend"
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 5000
+
+  Health:   http://127.0.0.1:5000/api/v1/health
+  Swagger:  http://127.0.0.1:5000/docs
+  ReDoc:    http://127.0.0.1:5000/redoc
+
+
+--- Terminal 2: UI (keep this window open) ---
+
+cd "c:\Trillion repos\Job Handler\frontend"
+npm run dev
+
+  App:      http://localhost:5173
+
+  Header should show "API connected" when the backend is up.
+
+
+STOP
+----
+Press Ctrl+C in each terminal.
+
+
+NOTES
+-----
+- Command must have a space before flags:
+  python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 5000
+  (Wrong: app.main:app--reload)
+- If you see WinError 10013 on port 5000, something is already using it. Free it:
+  Get-NetTCPConnection -LocalPort 5000 | Select OwningProcess
+  Stop-Process -Id <PID> -Force
+  Then run uvicorn again.
+- Do not leave a fake CI DATABASE_URL in the shell; it can override backend\.env.
+- Frontend build check (optional):  cd frontend  &&  npm run build
+- More detail: README.md and docs\api-overview.md

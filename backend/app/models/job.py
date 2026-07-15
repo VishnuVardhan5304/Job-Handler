@@ -32,6 +32,11 @@ class ProblemSeverity(str, enum.Enum):
     CRITICAL = "critical"
 
 
+class ProblemStatus(str, enum.Enum):
+    OPEN = "open"
+    CLOSED = "closed"
+
+
 class RunStatus(str, enum.Enum):
     QUEUED = "queued"
     RUNNING = "running"
@@ -129,6 +134,17 @@ class JobProblem(Base):
     code: Mapped[str] = mapped_column(String(64), nullable=False)
     message: Mapped[str] = mapped_column(Text, nullable=False)
     metadata_: Mapped[dict | None] = mapped_column("metadata", JSONB, nullable=True)
+    status: Mapped[ProblemStatus] = mapped_column(
+        Enum(
+            ProblemStatus,
+            name="problem_status_enum",
+            values_callable=_enum_values,
+            create_constraint=True,
+            native_enum=True,
+        ),
+        nullable=False,
+        server_default=ProblemStatus.OPEN.value,
+    )
     occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
@@ -139,16 +155,45 @@ class JobProblem(Base):
     )
 
     job: Mapped["Job"] = relationship(back_populates="problems")
+    solutions: Mapped[list["JobSolution"]] = relationship(back_populates="problem")
 
     __table_args__ = (
         Index("idx_job_problems_job_id", "job_id"),
         Index("idx_job_problems_severity", "severity"),
+        Index("idx_job_problems_status", "status"),
         Index(
             "idx_job_problems_unresolved",
             "job_id",
             "occurred_at",
             postgresql_where=text("resolved_at IS NULL"),
         ),
+    )
+
+
+class JobSolution(Base):
+    __tablename__ = "job_solutions"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    job_problem_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("job_problems.id", ondelete="RESTRICT"), nullable=False
+    )
+    summary: Mapped[str] = mapped_column(String(255), nullable=False)
+    details: Mapped[str] = mapped_column(Text, nullable=False)
+    metadata_: Mapped[dict | None] = mapped_column("metadata", JSONB, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
+
+    problem: Mapped["JobProblem"] = relationship(back_populates="solutions")
+
+    __table_args__ = (
+        Index("idx_job_solutions_problem_id", "job_problem_id"),
+        Index("idx_job_solutions_created_at", "created_at"),
     )
 
 

@@ -3,9 +3,9 @@ import uuid
 from sqlalchemy.orm import Session
 
 from app.core.exceptions import NotFoundError, ValidationError
-from app.models.job import JobProblem, utc_now
+from app.models.job import JobProblem, ProblemStatus, utc_now
 from app.repositories.job_repository import JobRepository
-from app.repositories.problem_repository import ProblemRepository
+from app.repositories.problem_repository import ProblemRepository, SolutionRepository
 from app.schemas.problem import (
     JobProblemCreate,
     JobProblemListResponse,
@@ -86,6 +86,7 @@ class ProblemService:
             code=payload.code,
             message=payload.message,
             metadata_=payload.metadata,
+            status=ProblemStatus.OPEN,
             occurred_at=payload.occurred_at or now,
             created_at=now,
             updated_at=now,
@@ -95,10 +96,10 @@ class ProblemService:
 
     def update_problem(self, problem_id: uuid.UUID, payload: JobProblemUpdate) -> JobProblemRead:
         problem = self._get_or_404(problem_id)
-        if problem.resolved_at is not None:
+        if problem.status == ProblemStatus.CLOSED or problem.resolved_at is not None:
             raise ValidationError(
-                detail="Cannot update a resolved problem",
-                fields={"id": "Problem is already resolved"},
+                detail="Cannot update a closed problem",
+                fields={"id": "Problem is already closed"},
             )
 
         data = payload.model_dump(exclude_unset=True)
@@ -116,12 +117,25 @@ class ProblemService:
 
     def resolve_problem(self, problem_id: uuid.UUID) -> JobProblemRead:
         problem = self._get_or_404(problem_id)
-        if problem.resolved_at is not None:
+        if problem.status == ProblemStatus.CLOSED or problem.resolved_at is not None:
             raise ValidationError(
-                detail="Problem is already resolved",
-                fields={"id": "Already resolved"},
+                detail="Problem is already closed",
+                fields={"id": "Already closed"},
             )
-        resolved = self.repo.resolve(problem)
+
+        items, total = SolutionRepository(self.db).list_for_job(
+            problem.job_id,
+            page=1,
+            page_size=1,
+            job_problem_id=problem_id,
+        )
+        if total < 1:
+            raise ValidationError(
+                detail="Add a solution for this problem before closing it",
+                fields={"id": "Solution required"},
+            )
+
+        resolved = self.repo.close(problem)
         return JobProblemRead.model_validate(resolved)
 
     def _get_or_404(self, problem_id: uuid.UUID) -> JobProblem:

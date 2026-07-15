@@ -47,4 +47,4 @@ tests/              # pytest (Phase 6)
 
 ## API base
 
-`/api/v1` — Jobs, JobProblems, JobRuns, Templates. No auth in MVP.
+`/api/v1` — Jobs, JobProblems, JobRuns, Templates. **Open full access** (no auth, no roles).

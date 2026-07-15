@@ -8,6 +8,8 @@ export type JobStatus = "draft" | "active" | "paused" | "archived";
 
 export type ProblemSeverity = "low" | "medium" | "high" | "critical";
 
+export type ProblemStatus = "open" | "closed";
+
 export type RunStatus = "queued" | "running" | "succeeded" | "failed";
 
 export interface Job {
@@ -36,6 +38,7 @@ export interface JobProblem {
   id: string;
   job_id: string;
   severity: ProblemSeverity;
+  status: ProblemStatus;
   code: string;
   message: string;
   metadata: Record<string, unknown> | null;
@@ -47,6 +50,24 @@ export interface JobProblem {
 
 export interface JobProblemListResponse {
   items: JobProblem[];
+  total: number;
+  page: number;
+  page_size: number;
+  pages: number;
+}
+
+export interface JobSolution {
+  id: string;
+  job_problem_id: string;
+  summary: string;
+  details: string;
+  metadata: Record<string, unknown> | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface JobSolutionListResponse {
+  items: JobSolution[];
   total: number;
   page: number;
   page_size: number;

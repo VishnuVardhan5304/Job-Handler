@@ -11,7 +11,7 @@ CREATE TYPE job_type_enum AS ENUM (
 CREATE TYPE job_status_enum AS ENUM ('draft', 'active', 'paused', 'archived');
 
 CREATE TYPE problem_severity_enum AS ENUM ('low', 'medium', 'high', 'critical');
-
+CREATE TYPE problem_status_enum AS ENUM ('open', 'closed');
 CREATE TYPE run_status_enum AS ENUM ('queued', 'running', 'succeeded', 'failed');
 
 CREATE TABLE jobs (
@@ -37,6 +37,7 @@ CREATE TABLE job_problems (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   job_id UUID NOT NULL REFERENCES jobs (id) ON DELETE RESTRICT,
   severity problem_severity_enum NOT NULL DEFAULT 'medium',
+  status problem_status_enum NOT NULL DEFAULT 'open',
   code VARCHAR(64) NOT NULL,
   message TEXT NOT NULL,
   metadata JSONB,
@@ -48,8 +49,22 @@ CREATE TABLE job_problems (
 
 CREATE INDEX idx_job_problems_job_id ON job_problems (job_id);
 CREATE INDEX idx_job_problems_severity ON job_problems (severity);
+CREATE INDEX idx_job_problems_status ON job_problems (status);
 CREATE INDEX idx_job_problems_unresolved ON job_problems (job_id, occurred_at)
   WHERE resolved_at IS NULL;
+
+CREATE TABLE job_solutions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  job_problem_id UUID NOT NULL REFERENCES job_problems (id) ON DELETE RESTRICT,
+  summary VARCHAR(255) NOT NULL,
+  details TEXT NOT NULL,
+  metadata JSONB,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_job_solutions_problem_id ON job_solutions (job_problem_id);
+CREATE INDEX idx_job_solutions_created_at ON job_solutions (created_at);
 
 CREATE TABLE job_runs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -64,6 +79,6 @@ CREATE TABLE job_runs (
 CREATE INDEX idx_job_runs_job_id ON job_runs (job_id, started_at);
 
 -- Down (reverse order):
--- DROP TABLE job_runs; DROP TABLE job_problems; DROP TABLE jobs;
--- DROP TYPE run_status_enum; DROP TYPE problem_severity_enum;
+-- DROP TABLE job_runs; DROP TABLE job_solutions; DROP TABLE job_problems; DROP TABLE jobs;
+-- DROP TYPE run_status_enum; DROP TYPE problem_status_enum; DROP TYPE problem_severity_enum;
 -- DROP TYPE job_status_enum; DROP TYPE job_type_enum;
