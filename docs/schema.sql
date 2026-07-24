@@ -5,7 +5,8 @@ CREATE TYPE job_type_enum AS ENUM (
   'EPICOR_GD_WH_SYNC',
   'TXT_TO_RPT',
   'RPT_TO_FABRIC',
-  'DATAFLOW_TO_LAKEHOUSE'
+  'DATAFLOW_TO_LAKEHOUSE',
+  'TASK_SCHEDULER'
 );
 
 CREATE TYPE job_status_enum AS ENUM ('draft', 'active', 'paused', 'archived');

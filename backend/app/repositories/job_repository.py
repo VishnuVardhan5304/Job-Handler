@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.models.job import Job, JobStatus, JobType
+from app.models.job import Job, JobProblem, JobStatus, JobType, ProblemStatus
 
 
 class JobRepository:
@@ -63,6 +63,24 @@ class JobRepository:
         offset = (page - 1) * page_size
         jobs = list(self.db.scalars(query.offset(offset).limit(page_size)).all())
         return jobs, total
+
+    def list_task_scheduler_jobs(self, *, include_archived: bool = True) -> list[Job]:
+        query = select(Job).where(Job.job_type == JobType.TASK_SCHEDULER)
+        if not include_archived:
+            query = query.where(Job.archived_at.is_(None))
+        return list(self.db.scalars(query).all())
+
+    def find_open_problem_by_code(self, job_id: uuid.UUID, code: str) -> JobProblem | None:
+        stmt = (
+            select(JobProblem)
+            .where(
+                JobProblem.job_id == job_id,
+                JobProblem.code == code,
+                JobProblem.status == ProblemStatus.OPEN,
+            )
+            .limit(1)
+        )
+        return self.db.scalars(stmt).first()
 
     def create(self, job: Job) -> Job:
         self.db.add(job)

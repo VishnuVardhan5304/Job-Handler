@@ -78,6 +78,17 @@ export function useJobsList() {
     };
   }, [filters]);
 
+  const reload = useCallback(async () => {
+    setState({ status: "loading" });
+    try {
+      const data = await fetchJobs(filters);
+      setState({ status: "ready", data });
+    } catch (error: unknown) {
+      const message = getErrorMessage(error, "Could not load jobs");
+      setState({ status: "error", message });
+    }
+  }, [filters]);
+
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const current = readParam(searchParams, "search");
@@ -102,6 +113,7 @@ export function useJobsList() {
     filters,
     updateParams,
     goToJob,
+    reload,
   };
 }
 

@@ -5,6 +5,7 @@ export const JOB_TYPE_LABELS: Record<JobType, string> = {
   TXT_TO_RPT: "TXT → RPT",
   RPT_TO_FABRIC: "RPT → Fabric",
   DATAFLOW_TO_LAKEHOUSE: "Data Flow → Lake House",
+  TASK_SCHEDULER: "Task Scheduler",
 };
 
 export const JOB_STATUS_LABELS: Record<JobStatus, string> = {

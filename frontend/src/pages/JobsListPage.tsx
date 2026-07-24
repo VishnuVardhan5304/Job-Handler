@@ -1,10 +1,14 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { syncTaskSchedulerJobs } from "../api/jobs";
+import { getErrorMessage } from "../api/errors";
 import { DataTable } from "../components/DataTable";
 import { EmptyState } from "../components/EmptyState";
 import { ErrorPanel, LoadingBlock } from "../components/AsyncState";
 import { JobStatusBadge } from "../components/JobStatusBadge";
 import { JobTypeBadge } from "../components/JobTypeBadge";
 import { PageHeader } from "../components/PageHeader";
+import { useToast } from "../components/Toast";
 import {
   JOB_STATUS_LABELS,
   JOB_TYPE_LABELS,
@@ -14,11 +18,27 @@ import { formatDateTime } from "../lib/format";
 import type { JobStatus, JobType } from "../types/api";
 
 export function JobsListPage() {
-  const { state, searchInput, setSearchInput, filters, updateParams, goToJob } = useJobsList();
+  const { state, searchInput, setSearchInput, filters, updateParams, goToJob, reload } =
+    useJobsList();
+  const { showToast } = useToast();
+  const [syncing, setSyncing] = useState(false);
 
   const hasActiveFilters = Boolean(
     filters.search || filters.job_type || filters.status || filters.include_archived,
   );
+
+  const handleSyncTaskScheduler = async () => {
+    setSyncing(true);
+    try {
+      const result = await syncTaskSchedulerJobs();
+      showToast(result.message, "success");
+      await reload();
+    } catch (error: unknown) {
+      showToast(getErrorMessage(error, "Task Scheduler sync failed"), "error");
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   return (
     <section className="jobs-list">
@@ -27,6 +47,15 @@ export function JobsListPage() {
         subtitle="Browse, search, and filter organization pipeline jobs"
         actions={
           <>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              disabled={syncing}
+              onClick={() => void handleSyncTaskScheduler()}
+              title="Import/refresh local Windows Task Scheduler tasks (skips sensitive tasks)"
+            >
+              {syncing ? "Syncing…" : "Sync Task Scheduler"}
+            </button>
             <Link to="/jobs/templates" className="btn btn--secondary">
               From template
             </Link>

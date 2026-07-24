@@ -5,4 +5,5 @@ export const PIPELINE_DEFAULTS: Record<JobType, { source: string; target: string
   TXT_TO_RPT: { source: "TXT", target: "RPT" },
   RPT_TO_FABRIC: { source: "RPT", target: "Fabric" },
   DATAFLOW_TO_LAKEHOUSE: { source: "Data Flow", target: "Lake House" },
+  TASK_SCHEDULER: { source: "Windows Task Scheduler", target: "Job Handler" },
 };

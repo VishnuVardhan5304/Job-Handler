@@ -18,6 +18,7 @@ export const ALL_TYPES: JobType[] = [
   "TXT_TO_RPT",
   "RPT_TO_FABRIC",
   "DATAFLOW_TO_LAKEHOUSE",
+  "TASK_SCHEDULER",
 ];
 
 function emptyStatusCounts(): Record<JobStatus, number> {
@@ -30,6 +31,7 @@ function emptyTypeCounts(): Record<JobType, number> {
     TXT_TO_RPT: 0,
     RPT_TO_FABRIC: 0,
     DATAFLOW_TO_LAKEHOUSE: 0,
+    TASK_SCHEDULER: 0,
   };
 }
 

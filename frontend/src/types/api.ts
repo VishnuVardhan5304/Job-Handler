@@ -2,7 +2,8 @@ export type JobType =
   | "EPICOR_GD_WH_SYNC"
   | "TXT_TO_RPT"
   | "RPT_TO_FABRIC"
-  | "DATAFLOW_TO_LAKEHOUSE";
+  | "DATAFLOW_TO_LAKEHOUSE"
+  | "TASK_SCHEDULER";
 
 export type JobStatus = "draft" | "active" | "paused" | "archived";
 

@@ -59,6 +59,21 @@ JOB_TEMPLATES: list[dict] = [
             "integration": "simulated",
         },
     },
+    {
+        "id": "task-scheduler",
+        "name": "Task Scheduler",
+        "description": "Import a local Windows Task Scheduler task as a Job (prefer Sync from Jobs list).",
+        "job_type": JobType.TASK_SCHEDULER,
+        "default_job_name": "Local Task Scheduler Job",
+        "schedule_cron": None,
+        "config": {
+            "integration": "windows_task_scheduler",
+            "task_path": "\\",
+            "task_name": "",
+            "folder": "\\",
+            "enabled": True,
+        },
+    },
 ]
 
 

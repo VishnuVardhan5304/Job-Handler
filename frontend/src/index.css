@@ -764,6 +764,24 @@ a:hover {
   gap: 0.75rem;
 }
 
+.job-detail__meta {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 0.35rem 1rem;
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.job-detail__meta dt {
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.job-detail__meta dd {
+  margin: 0;
+  word-break: break-word;
+}
+
 .job-detail__badges {
   display: flex;
   flex-wrap: wrap;

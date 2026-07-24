@@ -316,6 +316,46 @@ export function JobDetailPage() {
         {job.schedule_cron ? (
           <p className="muted">Schedule: {job.schedule_cron}</p>
         ) : null}
+        {job.job_type === "TASK_SCHEDULER" && job.config ? (
+          <dl className="job-detail__meta">
+            {typeof job.config.task_path === "string" ? (
+              <>
+                <dt>Task path</dt>
+                <dd className="mono-id">{job.config.task_path}</dd>
+              </>
+            ) : null}
+            {typeof job.config.folder === "string" ? (
+              <>
+                <dt>Folder</dt>
+                <dd>{job.config.folder}</dd>
+              </>
+            ) : null}
+            {typeof job.config.state === "string" ? (
+              <>
+                <dt>Scheduler state</dt>
+                <dd>{job.config.state}</dd>
+              </>
+            ) : null}
+            {typeof job.config.enabled === "boolean" ? (
+              <>
+                <dt>Enabled</dt>
+                <dd>{job.config.enabled ? "Yes" : "No"}</dd>
+              </>
+            ) : null}
+            {job.config.last_run_time != null ? (
+              <>
+                <dt>Last run</dt>
+                <dd>{String(job.config.last_run_time)}</dd>
+              </>
+            ) : null}
+            {job.config.last_task_result != null ? (
+              <>
+                <dt>Last result</dt>
+                <dd>{String(job.config.last_task_result)}</dd>
+              </>
+            ) : null}
+          </dl>
+        ) : null}
       </section>
 
       <section className="panel job-detail__runs">
@@ -323,7 +363,9 @@ export function JobDetailPage() {
           <div>
             <h2>Runs</h2>
             <p className="muted job-detail__runs-note">
-              Simulated execution history — no live Epicor, Fabric, or Lake House connectors in MVP.
+              {job.job_type === "TASK_SCHEDULER"
+                ? "Runs are imported from local Task Scheduler on Sync. Simulate remains available for manual checks."
+                : "Simulated execution history — no live Epicor, Fabric, or Lake House connectors in MVP."}
             </p>
           </div>
           {!isArchived ? (

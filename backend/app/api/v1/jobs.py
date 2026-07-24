@@ -1,21 +1,27 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Query, status
+from sqlalchemy.orm import Session
 
 from app.api.v1.responses import ERROR_RESPONSES
 from app.core.deps import get_db
 from app.models.job import JobStatus, JobType
 from app.schemas.job import JobCreate, JobListResponse, JobRead, JobUpdate
+from app.schemas.task_scheduler import TaskSchedulerSyncResponse
 from app.schemas.template import JobTemplateRead
 from app.services.job_service import JobService
+from app.services.task_scheduler_sync_service import TaskSchedulerSyncService
 from app.services.template_service import list_job_templates
-from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 
 def get_job_service(db: Session = Depends(get_db)) -> JobService:
     return JobService(db)
+
+
+def get_task_scheduler_sync_service(db: Session = Depends(get_db)) -> TaskSchedulerSyncService:
+    return TaskSchedulerSyncService(db)
 
 
 @router.get(
@@ -76,12 +82,30 @@ def create_job(
     response_model=list[JobTemplateRead],
     summary="List pipeline job templates",
     description=(
-        "Returns the four organization pipeline templates with schedule and config metadata. "
-        "`integration_mode` is `simulated` in MVP — no live Epicor/Fabric/Lake House calls."
+        "Returns organization pipeline templates with schedule and config metadata. "
+        "`TASK_SCHEDULER` prefers Sync from the Jobs list over manual create."
     ),
 )
 def get_job_templates() -> list[JobTemplateRead]:
     return list_job_templates()
+
+
+@router.post(
+    "/sync/task-scheduler",
+    response_model=TaskSchedulerSyncResponse,
+    summary="Sync local Windows Task Scheduler tasks into Jobs",
+    description=(
+        "Discovers local Task Scheduler tasks and upserts Jobs of type `TASK_SCHEDULER`. "
+        "Identity key is `config.task_path`. Sensitive / built-in Microsoft tasks are skipped. "
+        "Missing tasks are soft-archived. Last-run outcome maps to JobRun; non-zero results "
+        "may create an open JobProblem. Requires Windows + permission to read scheduled tasks."
+    ),
+    responses=ERROR_RESPONSES,
+)
+def sync_task_scheduler(
+    service: TaskSchedulerSyncService = Depends(get_task_scheduler_sync_service),
+) -> TaskSchedulerSyncResponse:
+    return service.sync()
 
 
 @router.get(

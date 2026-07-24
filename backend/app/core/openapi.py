@@ -21,9 +21,10 @@ REST API for the **Organization Job Handler** — pipeline Jobs, JobProblems, an
 - `TXT_TO_RPT` — TXT → RPT
 - `RPT_TO_FABRIC` — RPT → Fabric
 - `DATAFLOW_TO_LAKEHOUSE` — Data Flow → Lake House
+- `TASK_SCHEDULER` — Local Windows Task Scheduler (sync; skips sensitive tasks)
 
 ### Simulated vs integrated
-Templates and runs are **simulated** in MVP (metadata + fake execution). Live Epicor / Fabric / Lake House connectors are post-MVP.
+Templates and most runs are **simulated** in MVP. `TASK_SCHEDULER` Jobs sync metadata and last-run outcome from the local machine Task Scheduler (no remote hosts). Live Epicor / Fabric / Lake House connectors are post-MVP.
 """
 
 OPENAPI_TAGS = [

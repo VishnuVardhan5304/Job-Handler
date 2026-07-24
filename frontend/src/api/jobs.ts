@@ -65,3 +65,20 @@ export function archiveJob(jobId: string): Promise<Job> {
 export function fetchJobTemplates(): Promise<JobTemplate[]> {
   return apiRequest<JobTemplate[]>("/jobs/templates");
 }
+
+export interface TaskSchedulerSyncResult {
+  created: number;
+  updated: number;
+  archived: number;
+  skipped_sensitive: number;
+  runs_added: number;
+  problems_added: number;
+  imported: number;
+  message: string;
+}
+
+export function syncTaskSchedulerJobs(): Promise<TaskSchedulerSyncResult> {
+  return apiRequest<TaskSchedulerSyncResult>("/jobs/sync/task-scheduler", {
+    method: "POST",
+  });
+}

@@ -84,6 +84,7 @@ erDiagram
 | `TXT_TO_RPT` | TXT → RPT | TXT | RPT |
 | `RPT_TO_FABRIC` | RPT → Fabric | RPT | Fabric |
 | `DATAFLOW_TO_LAKEHOUSE` | Data Flow → Lake House | Data Flow | Lake House |
+| `TASK_SCHEDULER` | Task Scheduler | Windows Task Scheduler | Job Handler |
 
 ### `job_status_enum`
 
@@ -110,7 +111,7 @@ erDiagram
 |--------|------|----------|-------|
 | `id` | UUID | NO | Primary key, default `gen_random_uuid()` |
 | `name` | VARCHAR(255) | NO | Display name, indexed for search |
-| `job_type` | `job_type_enum` | NO | One of four pipeline types |
+| `job_type` | `job_type_enum` | NO | Pipeline / Task Scheduler type |
 | `source_system` | VARCHAR(128) | NO | e.g. Epicor, TXT, RPT, Data Flow |
 | `target_system` | VARCHAR(128) | NO | e.g. GD Warehouse, RPT, Fabric, Lake House |
 | `status` | `job_status_enum` | NO | Default `draft` |
@@ -129,6 +130,7 @@ EPICOR_GD_WH_SYNC     → Epicor        → GD Warehouse
 TXT_TO_RPT            → TXT           → RPT
 RPT_TO_FABRIC         → RPT           → Fabric
 DATAFLOW_TO_LAKEHOUSE → Data Flow     → Lake House
+TASK_SCHEDULER        → Windows Task Scheduler → Job Handler
 ```
 
 ### Indexes (planned)

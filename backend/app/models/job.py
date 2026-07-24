@@ -16,6 +16,7 @@ class JobType(str, enum.Enum):
     TXT_TO_RPT = "TXT_TO_RPT"
     RPT_TO_FABRIC = "RPT_TO_FABRIC"
     DATAFLOW_TO_LAKEHOUSE = "DATAFLOW_TO_LAKEHOUSE"
+    TASK_SCHEDULER = "TASK_SCHEDULER"
 
 
 class JobStatus(str, enum.Enum):
@@ -49,6 +50,7 @@ PIPELINE_DEFAULTS: dict[JobType, tuple[str, str]] = {
     JobType.TXT_TO_RPT: ("TXT", "RPT"),
     JobType.RPT_TO_FABRIC: ("RPT", "Fabric"),
     JobType.DATAFLOW_TO_LAKEHOUSE: ("Data Flow", "Lake House"),
+    JobType.TASK_SCHEDULER: ("Windows Task Scheduler", "Job Handler"),
 }
 
 

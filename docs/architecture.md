@@ -176,10 +176,11 @@ flowchart LR
 
 | Enum | Label | Source | Target |
 |------|-------|--------|--------|
-| `EPICOR_GD_WH_SYNC` | Epicor ? GD Warehouse | Epicor | GD Warehouse |
-| `TXT_TO_RPT` | TXT ? RPT | TXT | RPT |
-| `RPT_TO_FABRIC` | RPT ? Fabric | RPT | Fabric |
-| `DATAFLOW_TO_LAKEHOUSE` | Data Flow ? Lake House | Data Flow | Lake House |
+| `EPICOR_GD_WH_SYNC` | Epicor → GD Warehouse | Epicor | GD Warehouse |
+| `TXT_TO_RPT` | TXT → RPT | TXT | RPT |
+| `RPT_TO_FABRIC` | RPT → Fabric | RPT | Fabric |
+| `DATAFLOW_TO_LAKEHOUSE` | Data Flow → Lake House | Data Flow | Lake House |
+| `TASK_SCHEDULER` | Task Scheduler | Windows Task Scheduler | Job Handler |
 
 Templates pre-fill `job_type`, `source_system`, `target_system`, and a minimal `config` JSON stub.
 

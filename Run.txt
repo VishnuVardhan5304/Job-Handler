@@ -82,3 +82,10 @@ NOTES
 - Do not leave a fake CI DATABASE_URL in the shell; it can override backend\.env.
 - Frontend build check (optional):  cd frontend  &&  npm run build
 - More detail: README.md and docs\api-overview.md
+
+Task Scheduler Jobs (Windows)
+-----------------------------
+- Job type TASK_SCHEDULER imports local Task Scheduler tasks via Jobs → "Sync Task Scheduler".
+- Requires Windows + permission to read scheduled tasks (PowerShell Get-ScheduledTask).
+- Sensitive / built-in Microsoft tasks and password-logon tasks are skipped; action arguments are never stored.
+- After adding migration 003, apply only when approved:  alembic upgrade head
