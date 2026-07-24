@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     def cors_origins(self) -> list[str]:
         origins = [origin.strip() for origin in self.client_url.split(",") if origin.strip()]
         if self.environment == "development":
+            # Canonical Vite URL plus common loopback variants.
             origins.extend(
                 [
                     "http://localhost:5173",
@@ -25,6 +26,13 @@ class Settings(BaseSettings):
                 ]
             )
         return list(dict.fromkeys(origins))
+
+    @property
+    def cors_origin_regex(self) -> str | None:
+        """Allow any localhost/127.0.0.1 Vite port in development only."""
+        if self.environment != "development":
+            return None
+        return r"http://(localhost|127\.0\.0\.1):\d+"
 
 
 settings = Settings()

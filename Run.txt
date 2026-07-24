@@ -60,7 +60,7 @@ python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 5000
 cd "c:\Trillion repos\Job Handler\frontend"
 npm run dev
 
-  App:      http://localhost:5173
+  App:      http://localhost:5173  (fixed; if port busy, free it — Vite will not switch to 5174)
 
   Header should show "API connected" when the backend is up.
 
@@ -79,6 +79,7 @@ NOTES
   Get-NetTCPConnection -LocalPort 5000 | Select OwningProcess
   Stop-Process -Id <PID> -Force
   Then run uvicorn again.
+- If Vite says port 5173 is in use, free it the same way (LocalPort 5173). Do not use 5174.
 - Do not leave a fake CI DATABASE_URL in the shell; it can override backend\.env.
 - Frontend build check (optional):  cd frontend  &&  npm run build
 - More detail: README.md and docs\api-overview.md
