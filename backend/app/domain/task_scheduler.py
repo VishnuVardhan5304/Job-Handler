@@ -53,6 +53,11 @@ def is_sensitive_task(
         return "name_or_path_looks_sensitive"
 
     normalized = task_path.replace("/", "\\")
+    while "\\\\" in normalized:
+        normalized = normalized.replace("\\\\", "\\")
+    if not normalized.startswith("\\"):
+        normalized = "\\" + normalized
+
     for prefix in SKIP_PATH_PREFIXES:
         if normalized.upper().startswith(prefix.upper()):
             return "built_in_microsoft_task"
@@ -117,26 +122,38 @@ def discover_local_tasks() -> tuple[list[DiscoveredTask], list[DiscoveredTask]]:
 
     script = r"""
 $ErrorActionPreference = 'Stop'
-$tasks = Get-ScheduledTask | ForEach-Object {
+$tasks = @(Get-ScheduledTask | ForEach-Object {
   $t = $_
   $info = $null
   try { $info = Get-ScheduledTaskInfo -TaskName $t.TaskName -TaskPath $t.TaskPath } catch {}
-  $action = $t.Actions | Select-Object -First 1
+  $action = $null
+  if ($t.Actions) { $action = @($t.Actions)[0] }
   $principal = $t.Principal
-  $triggerText = ($t.Triggers | ForEach-Object { $_.ToString() }) -join '; '
+  $triggerText = ''
+  if ($t.Triggers) {
+    $parts = @()
+    foreach ($tr in @($t.Triggers)) {
+      if ($null -ne $tr) {
+        try { $parts += [string]$tr } catch {}
+      }
+    }
+    $triggerText = ($parts -join '; ')
+  }
+  $state = ''
+  try { $state = [string]$t.State } catch { $state = 'Unknown' }
   [PSCustomObject]@{
-    TaskPath = $t.TaskPath
-    TaskName = $t.TaskName
-    State = [string]$t.State
-    LogonType = if ($principal) { [string]$principal.LogonType } else { $null }
-    Execute = if ($action) { [string]$action.Execute } else { $null }
-    Arguments = if ($action) { [string]$action.Arguments } else { $null }
+    TaskPath = [string]$t.TaskPath
+    TaskName = [string]$t.TaskName
+    State = $state
+    LogonType = if ($principal -and $principal.LogonType) { [string]$principal.LogonType } else { $null }
+    Execute = if ($action -and $action.Execute) { [string]$action.Execute } else { $null }
+    Arguments = if ($action -and $action.Arguments) { [string]$action.Arguments } else { $null }
     LastRunTime = if ($info -and $info.LastRunTime) { $info.LastRunTime.ToString('o') } else { $null }
     LastTaskResult = if ($info) { $info.LastTaskResult } else { $null }
     TriggerSummary = $triggerText
   }
-}
-$tasks | ConvertTo-Json -Depth 4 -Compress
+})
+if ($tasks.Count -eq 0) { '[]' } else { $tasks | ConvertTo-Json -Depth 4 -Compress }
 """
     completed = subprocess.run(
         [
